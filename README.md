@@ -2,7 +2,7 @@
 
 Weird Docker behaviors and tricks.
 
-* [Dockerfile.000]
+## I just want to write a star
 
 Script:
 
