@@ -1,0 +1,10 @@
+FROM alpine
+ARG ALLOWED_ORIGINS="*"
+RUN if [ "$ALLOWED_ORIGINS" = "bin dev etc home lib media mnt opt proc root run sbin srv sys tmp usr var" ]; then \
+    echo "*" > /allowed-origins.txt; \
+    else \
+    echo "$ALLOWED_ORIGINS" > /allowed-origins.txt; \
+    fi
+
+ENTRYPOINT ["sh", "-c", "cat /allowed-origins.txt"]
+# ENTRYPOINT [ "sh", "-c", "chromedriver --whitelisted-ips=172.17.0.1 --allowed-origins=*" ]

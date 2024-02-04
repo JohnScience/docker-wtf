@@ -2,5 +2,5 @@ FROM alpine
 ARG ALLOWED_ORIGINS="*"
 RUN echo $ALLOWED_ORIGINS > /allowed-origins.txt
 
-CMD ["sh", "-c", "cat /allowed-origins.txt"]
+ENTRYPOINT ["sh", "-c", "cat /allowed-origins.txt"]
 # ENTRYPOINT [ "sh", "-c", "chromedriver --whitelisted-ips=172.17.0.1 --allowed-origins=*" ]
