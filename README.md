@@ -17,7 +17,7 @@ ENTRYPOINT ["sh", "-c", "cat /allowed-origins.txt"]
 # ENTRYPOINT [ "sh", "-c", "chromedriver --whitelisted-ips=172.17.0.1 --allowed-origins=*" ]
 ```
 
-you will get `bin dev etc home lib media mnt opt proc root run sbin srv sys tmp usr var` instead of `*` as the output. This could be a problem if you want to pass the `--allowed-origins = *` to `chromedriver` by default and parameterize the the argument via the `ARG` statement.
+you will get `bin dev etc home lib media mnt opt proc root run sbin srv sys tmp usr var` instead of `*` as the output. This could be a problem if you want to pass the `--allowed-origins = *` to [`chromedriver`](https://chromedriver.chromium.org/) by default and parameterize the the argument via the [`ARG`](https://docs.docker.com/engine/reference/builder/#arg) instruction.
 
 * Check the result of the problematic script
 
