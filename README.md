@@ -2,6 +2,13 @@
 
 Weird Docker behaviors and tricks.
 
+## Table of Contents
+
+* [I just want to write a star](#i-just-want-to-write-a-star)
+* [Do I really have to use `ENV ENV_VAR=smth` instead of `RUN export ENV_VAR=smth`?](#do-i-really-have-to-use-env-env_varsmth-instead-of-run-export-env_varsmth)
+* [I just want to set the value conditionally](#i-just-want-to-set-the-value-conditionally)
+* [You can't use the value of ARG directly](#you-cant-use-the-value-of-arg-directly)
+
 ## I just want to write a star
 
 * Problem
@@ -95,7 +102,7 @@ Beware though that the `ENV` instruction is limited.
 
 Setting the value of an environment variable depending on the value of an expression inside Docker image doesn't work. You can only unconditionally set the value with the [`ENV`](https://docs.docker.com/engine/reference/builder/#env) instruction, which is limited.
 
-Even this simple script doesn't work,
+Even this simple script
 
 ```Dockerfile
 FROM alpine
@@ -108,6 +115,8 @@ RUN if [ "$PORT" = "80" ]; then\
     fi
 ENTRYPOINT [ "sh", "-c", "echo IS_DEFAULT=$IS_DEFAULT" ]
 ```
+
+prints `IS_DEFAULT=` instead of `IS_DEFAULT=1`.
 
 You can verify it with the following command,
 
@@ -122,10 +131,19 @@ It will print `IS_DEFAULT=`.
 The best solution I've come up with is using files. For example,
 
 ```Dockerfile
-
+FROM alpine
+ENV PORT=80
+RUN if [ "$PORT" = "80" ]; then\
+    echo "1" > is_default.txt; \
+    else \
+    echo "0" > is_default.txt; \
+    fi
+ENTRYPOINT [ "sh", "-c", "echo IS_DEFAULT=$(cat /is_default.txt)" ]
 ```
 
-## ARG and ENV are a joke
+correctly prints `IS_DEFAULT=1`.
+
+## You can't use the value of ARG directly
 
 * Problem
 
@@ -137,13 +155,13 @@ ARG PORT=80
 ENTRYPOINT ["echo", "$PORT"]
 ```
 
-I would love `ENTRYPOINT ["echo", $PORT]` to work but it doesn't. However, if we run the original script like this,
+I would love `ENTRYPOINT ["echo", $PORT]` to work but it doesn't. However, if we run the script like this,
 
 ```console
 docker build -f Dockerfile.002 -t wtf . && docker run --rm wtf & docker rmi wtf
 ```
 
-it will always print `$PORT` instead of the value of the `PORT` variable.
+it will always print `$PORT` instead of `80` (the value of the `PORT` variable).
 
 Alright, let's try to fix it this way,
 
@@ -170,10 +188,26 @@ ENV PORT=$PORT
 ENTRYPOINT ["sh", "-c", "echo $PORT"]
 ```
 
-It works! You can verify it by running the following command,
+It will print `80`, as expected! You can verify it by running the following command,
 
 ```console
 docker build -f Dockerfile.004 -t wtf . && docker run --rm wtf & docker rmi wtf
 ```
 
-Now we can just use the `ENV` instruction to parameterize the `ENTRYPOINT` instruction, right? Wrong! There is an awesome interaction betwee
+## Miscellaneous
+
+If you want to see the content of the image, you can run the following command,
+
+### Windows
+
+```console
+type Dockerfile.NNN
+```
+
+### Linux and macOS
+
+```console
+cat Dockerfile.NNN
+```
+
+where `NNN` is the number of the Dockerfile, e.g. `000`.
