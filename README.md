@@ -198,18 +198,23 @@ docker build -f Dockerfile.004 -t wtf . && docker run --rm wtf & docker rmi wtf
 
 ## Miscellaneous
 
-If you want to see the content of the image, you can run the following command,
+<details>
+  <summary>Commands to check the contents of Dockerfile.NNN</summary>
+  
+If you want to see the content of the `Dockerfile.NNN`, you can run the following command,
 
-### Windows
+* Windows
 
 ```console
 type Dockerfile.NNN
 ```
 
-### Linux and macOS
+* Linux and macOS
 
 ```console
 cat Dockerfile.NNN
 ```
 
 where `NNN` is the number of the Dockerfile, e.g. `000`.
+  
+</details>
