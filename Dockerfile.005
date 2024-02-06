@@ -1,0 +1,9 @@
+FROM alpine
+# the value of PORT can be changed via the -e flag of `docker run`
+ENV PORT=80
+RUN if [ "$PORT" = "80" ]; then\
+    export IS_DEFAULT=1; \
+    else \
+    export IS_DEFAULT=0; \
+    fi
+ENTRYPOINT [ "sh", "-c", "echo IS_DEFAULT=$IS_DEFAULT" ]

@@ -1,0 +1,4 @@
+FROM alpine
+ARG PORT=80
+ENV PORT=$PORT
+ENTRYPOINT ["sh", "-c", "echo $PORT"]

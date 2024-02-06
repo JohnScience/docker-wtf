@@ -1,0 +1,8 @@
+FROM alpine
+ENV PORT=80
+RUN if [ "$PORT" = "80" ]; then\
+    echo "1" > is_default.txt; \
+    else \
+    echo "0" > is_default.txt; \
+    fi
+ENTRYPOINT [ "sh", "-c", "echo IS_DEFAULT=$(cat /is_default.txt)" ]
