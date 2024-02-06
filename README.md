@@ -143,6 +143,8 @@ ENTRYPOINT [ "sh", "-c", "echo IS_DEFAULT=$(cat /is_default.txt)" ]
 
 correctly prints `IS_DEFAULT=1`.
 
+For why we use files intead of environment variables, see [I just want to set the value conditionally](#i-just-want-to-set-the-value-conditionally).
+
 ## You can't use the value of ARG directly
 
 * Problem
