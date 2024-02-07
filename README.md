@@ -9,6 +9,7 @@ Weird Docker behaviors and tricks.
 * [I just want to set the value conditionally](#i-just-want-to-set-the-value-conditionally)
 * [You can't use the value of ARG directly](#you-cant-use-the-value-of-arg-directly)
 * [Naming ENV and ARG varibles the same way may yield unexpected results](#naming-env-and-arg-varibles-the-same-way-may-yield-unexpected-results)
+* [Appendix A. Miscellaneous](#appendix-a-miscellaneous)
 
 ## I just want to write a star
 
@@ -281,7 +282,7 @@ the `PORT` variable refers to the `ARG` variable, not the `ENV` variable.
 
 The best solution I've come up with is to name the `ARG` and `ENV` variables differently. At the moment of writing, there is no convention for discriminating between `ARG` and `ENV` variables but I can recommend naming them either `PORT_DEFAULT` and `PORT` or `PORT_ARG` and `PORT`.
 
-## Miscellaneous
+## Appendix A. Miscellaneous
 
 <details>
   <summary>Commands to check the contents of Dockerfile.NNN</summary>
