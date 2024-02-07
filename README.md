@@ -34,7 +34,28 @@ you will get `bin dev etc home lib media mnt opt proc root run sbin srv sys tmp 
 docker build -f Dockerfile.000 -t wtf . && docker run --rm wtf & docker rmi wtf
 ```
 
-* Mitigation
+* Mitigation 1
+
+If possible, just quote the build `ARG`,
+
+```Dockerfile
+FROM alpine
+ARG ALLOWED_ORIGINS="*"
+RUN echo "$ALLOWED_ORIGINS" > /allowed-origins.txt
+ENTRYPOINT ["sh", "-c", "cat /allowed-origins.txt"]
+```
+
+The output will be `*`.
+
+You can verify it with the following command,
+
+```console
+docker build -f Dockerfile.010 -t wtf . && docker run --rm wtf & docker rmi wtf
+```
+
+* Mitigation 2 (deprecated)
+
+If you find a reason for this mitigation to be useful, please let me know.
 
 ```Dockerfile
 FROM alpine
