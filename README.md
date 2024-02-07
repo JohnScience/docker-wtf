@@ -196,6 +196,90 @@ It will print `80`, as expected! You can verify it by running the following comm
 docker build -f Dockerfile.004 -t wtf . && docker run --rm wtf & docker rmi wtf
 ```
 
+## Naming ENV and ARG varibles the same way may yield unexpected results
+
+* Problem
+
+With some remarks,
+
+```Dockerfile
+ARG PORT=80
+ENV PORT=$PORT
+```
+
+is a useful pattern for setting the default value of an environment variable for the container while allowing to override the defaults with [`--build-arg`](https://docs.docker.com/build/guide/build-args/) or [`-e`](https://docs.docker.com/engine/reference/run/#environment-variables) flags.
+
+Let's try to run the following command with several different combination of the `--build-arg` and `-e` flags,
+
+```Dockerfile
+FROM alpine
+ARG PORT=80
+ENV PORT=$PORT
+ENTRYPOINT ["sh", "-c", "echo $PORT"]
+```
+
+1. No overriding
+
+```console
+docker build -f Dockerfile.004 -t wtf . && docker run --rm wtf & docker rmi wtf
+```
+
+As expected, it prints `80`.
+
+2. Overriding the `PORT` build-time (`ARG`) variable
+
+```console
+docker build --build-arg PORT=8080 -f Dockerfile.004 -t wtf . && docker run --rm wtf & docker rmi wtf
+```
+
+As expected, it prints `8080`.
+
+3. Overriding the `PORT` environment (`ENV`) variable
+
+```console
+docker build -f Dockerfile.004 -t wtf . && docker run --rm -e PORT=8080 wtf & docker rmi wtf
+```
+
+As expected, it prints `8080`.
+
+4. Overriding both the `PORT` build-time (`ARG`) and environment (`ENV`) variables
+
+```console
+docker build --build-arg PORT=8080 -f Dockerfile.004 -t wtf . && docker run --rm -e PORT=8081 wtf & docker rmi wtf
+```
+
+As expected, the value of the `PORT` environment variable prevails and `8081` is printed.
+
+**However**, if `ARG` and `ENV` variables are named the same way, you may get unexpected results.
+
+If you run the Dockerfile below,
+
+```Dockerfile
+FROM alpine
+ARG PORT=80
+ENV PORT=$PORT
+RUN echo $PORT > /port.txt
+ENTRYPOINT [ "sh", "-c", "cat /port.txt" ]
+```
+
+and try to override the `PORT` environment variable,
+
+```console
+docker build -f Dockerfile.009 -t wtf . && docker run --rm -e PORT=8080 wtf & docker rmi wtf
+```
+
+you will still get `80` instead of `8080`. The `PORT` environment variable **does** get overriden but in the line
+
+```Dockerfile
+RUN echo $PORT > /port.txt
+```
+
+the `PORT` variable refers to the `ARG` variable, not the `ENV` variable.
+
+* Mitigation
+
+The best solution I've come up with is to name the `ARG` and `ENV` variables differently. At the moment of writing, there is no convention for discriminating between `ARG` and `ENV` variables but I can recommend naming them either `PORT_DEFAULT` and `PORT` or `PORT_ARG` and `PORT`.
+
 ## Miscellaneous
 
 <details>
@@ -217,4 +301,15 @@ cat Dockerfile.NNN
 
 where `NNN` is the number of the Dockerfile, e.g. `000`.
   
+</details>
+
+<details>
+  <summary>TODOs</summary>
+  
+* Consider adding a section about the aggressiveness of caching in Dockerfile's layers.
+
+* Consider adding recommendations for how to fix the semantics of Dockerfile's instructions.
+
+* Compare various Dockerfile linters to see if they can catch the problems described in this document and if it's a good idea to recommend one or a few of them.
+ 
 </details>
