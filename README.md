@@ -8,6 +8,7 @@ Weird Docker behaviors and tricks.
 * [Do I really have to use `ENV ENV_VAR=smth` instead of `RUN export ENV_VAR=smth`?](#do-i-really-have-to-use-env-env_varsmth-instead-of-run-export-env_varsmth)
 * [I just want to set the value conditionally](#i-just-want-to-set-the-value-conditionally)
 * [You can't use the value of ARG directly](#you-cant-use-the-value-of-arg-directly)
+* [Naming ENV and ARG varibles the same way may yield unexpected results](#naming-env-and-arg-varibles-the-same-way-may-yield-unexpected-results)
 
 ## I just want to write a star
 
