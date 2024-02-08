@@ -303,6 +303,37 @@ the `PORT` variable refers to the `ARG` variable, not the `ENV` variable.
 
 The best solution I've come up with is to name the `ARG` and `ENV` variables differently. At the moment of writing, there is no convention for discriminating between `ARG` and `ENV` variables but I can recommend naming them either `PORT_DEFAULT` and `PORT` or `PORT_ARG` and `PORT`.
 
+## RUN instruction captures the value of the environment variable at the time of the build
+
+Flagging the `docker run` with the `-e` flag *usually* allows to override the value of the environment variable set in the `Dockerfile` with the `ENV` instruction. It is its distinctive feature compared to the build `ARG`.
+
+* Problem
+
+The `RUN` instruction captures the value of the environment variable at the time of the build and not at the time of the run.
+
+Consequently, the following script
+
+```Dockerfile
+FROM alpine
+ENV PORT="80"
+RUN echo "$PORT" > /port.txt
+ENTRYPOINT ["sh", "-c", "cat /port.txt"]
+```
+
+will always print `80`, regardless of whether you run it with the `-e` flag or not.
+
+So even with this command,
+
+```console
+docker build -f Dockerfile.011 -t wtf . && docker run -e PORT=8080 --rm wtf & docker rmi wtf
+```
+
+it will print `80` instead of `8080`.
+
+* Mitigation
+
+WIP
+
 ## Appendix A. Miscellaneous
 
 <details>

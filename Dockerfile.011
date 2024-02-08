@@ -1,0 +1,4 @@
+FROM alpine
+ENV PORT="80"
+RUN echo "$PORT" > /port.txt
+ENTRYPOINT ["sh", "-c", "cat /port.txt"]
