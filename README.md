@@ -330,6 +330,34 @@ docker build -f Dockerfile.011 -t wtf . && docker run -e PORT=8080 --rm wtf & do
 
 it will print `80` instead of `8080`.
 
+<details>
+  <summary>Similar Dockerfile that works as intended</summary>
+  
+```Dockerfile
+FROM alpine
+ARG PORT=80
+ENV PORT=$PORT
+ENTRYPOINT ["sh", "-c", "echo $PORT"]
+```
+
+You can verify that if you run the following command,
+
+```console
+docker build -f Dockerfile.004 -t wtf . && docker run --rm wtf & docker rmi wtf
+```
+
+you will get `80` as the output.
+
+And if you run the following command,
+
+```console
+docker build -f Dockerfile.004 -t wtf . && docker run -e PORT=8080 --rm wtf & docker rmi wtf
+```
+
+You will get `8080` as the output.
+
+</details>
+
 * Mitigation
 
 WIP
