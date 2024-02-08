@@ -1,6 +1,6 @@
 # Docker, WTF?
 
-Weird Docker behaviors and tricks.
+Possibly subjectively weird Docker behaviors and tricks.
 
 ## Table of Contents
 
@@ -305,6 +305,8 @@ The best solution I've come up with is to name the `ARG` and `ENV` variables dif
 
 ## RUN instruction captures the value of the environment variable at the time of the build
 
+Objectively speaking, this is not a problem but a feature.
+
 Flagging the `docker run` with the `-e` flag *usually* allows to override the value of the environment variable set in the `Dockerfile` with the `ENV` instruction. It is its distinctive feature compared to the build `ARG`.
 
 * Problem
@@ -358,9 +360,9 @@ You will get `8080` as the output.
 
 </details>
 
-* Mitigation
+* Explanation
 
-WIP
+During the build process, the `RUN` command is executed and the value of the `PORT` environment variable is captured (at build time). Overriding the value of the `PORT` environment variable affects only the `ENTRYPOINT` instruction.
 
 ## Appendix A. Miscellaneous
 
